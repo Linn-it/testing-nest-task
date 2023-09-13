@@ -12,6 +12,8 @@ export class CreateEmployeeRequestDto {
   @ApiProperty()
   email: string;
 
+  profile : string;
+
   @ApiProperty()
   address: string;
 

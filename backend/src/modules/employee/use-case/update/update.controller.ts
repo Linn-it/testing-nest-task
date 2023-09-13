@@ -4,13 +4,13 @@ import {
   Response,
   Param,
   Body,
-  UseGuards,
+  // UseGuards,
   NotFoundException,
 } from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { UpdateEmployeeResponseDto } from './update.response.dto';
 import { UpdateEmployeeRequestDto } from './update.request.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+// import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('employee')
@@ -19,7 +19,7 @@ export class UpdateController {
   constructor(private employeeService: EmployeeService) {}
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Put('edit/:id')
   async updateEmployee(
     @Response() res,

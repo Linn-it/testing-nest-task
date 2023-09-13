@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Response, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Response} from '@nestjs/common';
 import { EmployeeService } from '../../service/employee.service';
 import { GetOneEmployeeResponseDto } from './getOne.response.dto';
-import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
+// import { AuthGuard } from 'src/modules/auth/guard/auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('employee')
@@ -10,7 +10,7 @@ export class GetOneController {
   constructor(private employeeService: EmployeeService) {}
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('detail/:id')
   async getById(
     @Response() res,

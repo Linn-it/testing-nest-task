@@ -3,12 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { mongooseConfigFactory } from './config/database.config.service';
+// import { mongooseConfigFactory } from './config/database.config.service';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 const configService = new ConfigService();
 
@@ -17,11 +18,12 @@ const configService = new ConfigService();
     ConfigModule.forRoot({
       envFilePath: '.env',
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: mongooseConfigFactory,
-      inject: [ConfigService],
-    }),
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: mongooseConfigFactory,
+    //   inject: [ConfigService],
+    // }),
+    MongooseModule.forRoot(process.env.MONGO_URL),
     MailerModule.forRoot({
       transport: {
         host: configService.get('MAIL_SERVICE'),
@@ -35,6 +37,7 @@ const configService = new ConfigService();
     ProjectModule,
     EmployeeModule,
     TaskModule,
+    CloudinaryModule
   ],
   controllers: [AppController],
   providers: [AppService],

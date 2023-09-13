@@ -9,6 +9,7 @@ import { CreateEmployeeRequestDto } from '../use-case/create/create.request.dto'
 import { VerifyEmailService } from 'src/template/verifyEmail';
 import { EmailService } from 'src/utils/sendMail';
 import { UpdateEmployeeRequestDto } from '../use-case/update/update.request.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class EmployeeService {
@@ -17,6 +18,7 @@ export class EmployeeService {
     private readonly emailService: EmailService,
     private readonly verifyEmailService: VerifyEmailService,
     private readonly jwtService: JwtService,
+    private readonly cloudinary : CloudinaryService
   ) {}
 
   async getAllEmployee(): Promise<any> {
@@ -31,7 +33,7 @@ export class EmployeeService {
     return employee;
   }
 
-  async createEmployee(payload: CreateEmployeeRequestDto): Promise<any> {
+  async createEmployee(payload: CreateEmployeeRequestDto,profile? : Express.Multer.File): Promise<any> {
     const employeeData = {
       employeeName: payload.employeeName,
       email: payload.email,
@@ -40,7 +42,6 @@ export class EmployeeService {
       dob: payload.dob,
       position: payload.position,
     };
-
     const user = await this.employeeModel.findOne({
       email: employeeData.email,
     });
@@ -49,25 +50,25 @@ export class EmployeeService {
     }
     const randomPassword = randomstring.generate(8);
     const hashedPassword = await bcrypt.hash(randomPassword, 10);
-
     const token = this.jwtService.sign({ email: employeeData.email });
-
+    // console.log(img)
     const data = {
       ...employeeData,
       password: hashedPassword,
       token,
+      profile : profile ? await this.cloudinary.uploadImage(profile).then(data =>{return {data: data.secure_url}}) : undefined,
     };
     await this.employeeModel.create(data);
 
-    const verifyLink = `http://localhost:3000/verify?token=${token}`;
+    // const verifyLink = `http://localhost:3000/verify?token=${token}`;
 
-    const template = this.verifyEmailService.verifyTemplate(
-      employeeData.email,
-      verifyLink,
-      randomPassword,
-    );
+    // const template = this.verifyEmailService.verifyTemplate(
+    //   employeeData.email,
+    //   verifyLink,
+    //   randomPassword,
+    // );
 
-    this.emailService.sendMail(employeeData.email, 'Verify Email', template);
+    // this.emailService.sendMail(employeeData.email, 'Verify Email', template);
 
     return data;
   }
